@@ -4,8 +4,7 @@ A Chrome extension that allows you to pin your favorite ChatGPT chats and keeps 
 
 ## Features
 
-- 📌 **Pin/Unpin Chats**: Click the pin icon to pin or unpin any ChatGPT chat
-- 🖱️ **Context Menu**: Right-click any chat to pin/unpin via context menu
+- 📌 **Pin/Unpin Chats**: Right-click any chat to pin or unpin via context menu
 - 🔝 **Top Positioning**: Pinned chats automatically appear at the top of your chat list
 - 💾 **Persistent Storage**: Your pinned chats are saved and restored across browser sessions
 - ✨ **Smooth Animations**: Elegant transitions and visual feedback
@@ -13,6 +12,12 @@ A Chrome extension that allows you to pin your favorite ChatGPT chats and keeps 
 - 📱 **Responsive**: Works on all screen sizes
 
 ## Installation
+
+### From Chrome Web Store (Recommended)
+
+1. **Visit the Chrome Web Store** and search for "ChatGPT Chat Pinner"
+2. **Click "Add to Chrome"** to install the extension
+3. **Start Using**: Navigate to [ChatGPT](https://chatgpt.com) and right-click any chat to pin/unpin
 
 ### From Source (Developer Mode)
 
@@ -28,36 +33,33 @@ A Chrome extension that allows you to pin your favorite ChatGPT chats and keeps 
 
 4. **Start Using**:
    - Navigate to [ChatGPT](https://chatgpt.com)
-   - Hover over any chat in your list
-   - Click the pin icon to pin/unpin chats
+   - Right-click any chat in your list to pin/unpin
 
 ## How to Use
 
 1. **Navigate to ChatGPT**: Open [chatgpt.com](https://chatgpt.com) in your browser
 
-2. **Pin a Chat** (Two Methods):
-   - **Method 1**: Click the pin button on any chat in your chat list
-   - **Method 2**: Right-click on any chat and select "Pin Chat" from the context menu
+2. **Pin a Chat**:
+   - Right-click on any chat in your chat list
+   - Select "Pin Chat" from the context menu
 
-3. **Unpin a Chat** (Two Methods):
-   - **Method 1**: Click the filled pin icon on a pinned chat
-   - **Method 2**: Right-click on a pinned chat and select "Unpin Chat"
-
+3. **Unpin a Chat**:
+   - Right-click on a pinned chat
+   - Select "Unpin Chat" from the context menu
 
 4. **View Pinned Chats**: Pinned chats will automatically appear at the top of your list with a golden highlight
 
 ## Features in Detail
 
 ### Pin Management
-- **One-Click Pinning**: Simply click the pin icon to pin any chat
 - **Context Menu Support**: Right-click any chat for quick pin/unpin access
-- **Visual Feedback**: Pinned chats have a golden border and filled pin icon
+- **Visual Feedback**: Pinned chats have a golden border and distinctive styling
 - **Instant Reordering**: Chats are immediately moved to the top when pinned
 
 ### Visual Design
-- **Always Visible**: Pin buttons are always visible for easy access
 - **Golden Highlights**: Pinned chats have a distinctive golden accent
 - **Smooth Animations**: All interactions include smooth transitions
+- **Clean Integration**: Seamlessly blends with ChatGPT's interface
 
 ### Data Persistence
 - **Cross-Session Storage**: Your pinned chats are saved using Chrome's sync storage
@@ -78,21 +80,22 @@ This extension:
 - ✅ Stores data locally in your browser
 - ✅ Does not collect or transmit any personal data
 - ✅ Does not access chat content, only chat IDs for pinning
+- ✅ Minimal permissions required for functionality
 
 ## Troubleshooting
 
-**Pin buttons not appearing?**
+**Extension not working?**
 - Refresh the ChatGPT page
 - Make sure you're on chatgpt.com or chat.openai.com
-- Pin buttons should be visible on all chat items
+- Check that the extension is enabled in chrome://extensions/
 
 **Pinned chats not persisting?**
 - Check that Chrome sync is working
 - The extension needs storage permissions (granted automatically)
 
-**Extension not working?**
-- Reload the extension in chrome://extensions/
-- Check that the extension is enabled
+**Context menu not appearing?**
+- Right-click on any chat item in the sidebar
+- Make sure the extension is enabled
 - Try refreshing the ChatGPT page
 
 ## Support

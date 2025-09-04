@@ -1,8 +1,7 @@
-// ChatGPT Chat Pinner Background Script
 
-// Context menu setup
+
 chrome.runtime.onInstalled.addListener((details) => {
-  // Create context menu items
+  
   chrome.contextMenus.create({
     id: 'pin-chat',
     title: 'Pin Chat',
@@ -24,19 +23,18 @@ chrome.runtime.onInstalled.addListener((details) => {
   });
 
   if (details.reason === 'install') {
-    console.log('ChatGPT Chat Pinner extension installed');
-    
-    // Initialize storage with empty pinned chats array
+   
     chrome.storage.sync.set({ pinnedChats: [] });
-    
-    // Show welcome message
+    console.log('ChatGPT Chat Pinner extension installed');
+
     chrome.tabs.create({
       url: 'https://chatgpt.com'
-    });
-  }
+    }); 
+
+    }
 });
 
-// Handle context menu clicks
+
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId === 'pin-chat' || info.menuItemId === 'unpin-chat') {
     const chatId = extractChatIdFromUrl(info.linkUrl);
@@ -55,14 +53,13 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       await chrome.storage.sync.set({ 
         pinnedChats: Array.from(pinnedChats) 
       });
-
-      // Notify the content script to update the UI
+ 
       chrome.tabs.sendMessage(tab.id, {
         type: 'contextMenuPinToggle',
         chatId: chatId,
         action: info.menuItemId
       }).catch(() => {
-        // Content script might not be loaded, ignore error
+        
       });
 
     } catch (error) {
@@ -71,10 +68,9 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   }
 });
 
-// Update context menu visibility based on pin status
+
 chrome.storage.onChanged.addListener(async (changes, namespace) => {
   if (namespace === 'sync' && changes.pinnedChats) {
-    // Update context menu items visibility
     updateContextMenus(changes.pinnedChats.newValue || []);
   }
 });
@@ -86,14 +82,13 @@ function extractChatIdFromUrl(url) {
 }
 
 function updateContextMenus(pinnedChats) {
-  // This function could be enhanced to show/hide menu items based on current context
-  // For now, both options are always available
+ 
 }
 
-// Handle storage changes and sync across tabs
+
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === 'sync' && changes.pinnedChats) {
-    // Notify all ChatGPT tabs about the change
+   
     chrome.tabs.query({
       url: ['https://chatgpt.com/*', 'https://chat.openai.com/*']
     }, (tabs) => {
@@ -102,20 +97,20 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
           type: 'pinnedChatsUpdated',
           pinnedChats: changes.pinnedChats.newValue
         }).catch(() => {
-          // Tab might not have content script loaded yet, ignore error
+          
         });
       });
     });
   }
 });
 
-// Handle messages from content script
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'getPinnedChats') {
     chrome.storage.sync.get(['pinnedChats']).then((result) => {
       sendResponse(result.pinnedChats || []);
     });
-    return true; // Will respond asynchronously
+    return true; 
   }
   
   if (message.type === 'setPinnedChats') {
@@ -124,6 +119,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }).catch((error) => {
       sendResponse({ success: false, error: error.message });
     });
-    return true; // Will respond asynchronously
+    return true; 
   }
 });

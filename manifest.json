@@ -2,7 +2,9 @@
   "manifest_version": 3,
   "name": "ChatGPT Chat Pinner",
   "version": "1.0.0",
-  "description": "Pin your favorite ChatGPT chats and keep them at the top of your chat list",
+  "description": "Pin your favorite ChatGPT chats and keep them at the top of your chat list for easy access. Right-click any chat to pin/unpin via context menu.",
+  "author": "Robera Abera",
+  "homepage_url": "https://github.com/roba-6734/chatgpt-chat-pinner",
   "permissions": [
     "storage",
     "activeTab",
@@ -27,12 +29,18 @@
     "service_worker": "background.js"
   },
   "icons": {
-    "16": "icon16.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "ChatGPT Chat Pinner"
-  }
+    "default_title": "ChatGPT Chat Pinner - Pin your favorite chats"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["styles.css"],
+      "matches": ["https://chatgpt.com/*", "https://chat.openai.com/*"]
+    }
+  ]
 }
