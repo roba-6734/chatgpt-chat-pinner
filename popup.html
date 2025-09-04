@@ -11,14 +11,23 @@
       width: 300px;
       min-height: 200px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #f0f0f0;
       color: white;
+    }
+
+    .popup-wrapper {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 16px;
+      overflow: hidden;
+      margin: 8px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
 
     .header {
       padding: 20px;
       text-align: center;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .header h1 {
@@ -35,11 +44,12 @@
 
     .content {
       padding: 20px;
+      background: rgba(255, 255, 255, 0.02);
     }
 
     .stats {
       background: rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
+      border-radius: 12px;
       padding: 16px;
       margin-bottom: 16px;
     }
@@ -82,6 +92,7 @@
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       font-size: 12px;
       opacity: 0.7;
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .icon {
@@ -115,35 +126,36 @@
   </style>
 </head>
 <body>
-  <div class="header">
-    <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M16 12V4h1V2H7v2h1v8l-2 2v1h5.2l.8 3 .8-3H18v-1l-2-2z"/>
-    </svg>
-    <h1>Chat Pinner</h1>
-    <p>Pin your favorite ChatGPT chats</p>
-  </div>
+  <div class="popup-wrapper">
+    <div class="header">
+      <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M16 12V4h1V2H7v2h1v8l-2 2v1h5.2l.8 3 .8-3H18v-1l-2-2z"/>
+      </svg>
+      <h1>Chat Pinner</h1>
+      <p>Pin your favorite ChatGPT chats</p>
+    </div>
 
-  <div class="content">
-    <div class="stats">
-      <div class="stat-item">
-        <span class="stat-label">Pinned Chats:</span>
-        <span class="stat-value" id="pinnedCount">
-          <div class="loading">
-            <div class="spinner"></div>
-            Loading...
-          </div>
-        </span>
+    <div class="content">
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-label">Pinned Chats:</span>
+          <span class="stat-value" id="pinnedCount">
+            <div class="loading">
+              <div class="spinner"></div>
+              Loading...
+            </div>
+          </span>
+        </div>
+      </div>
+
+      <div class="instructions">
+        <strong>How to use:</strong><br>
+        1. Go to ChatGPT<br>
+        2. Right-click any chat and select "Pin Chat"<br>
+        3. Pinned chats appear at the top with golden highlights!<br>
+        4. Right-click again to unpin
       </div>
     </div>
-
-    <div class="instructions">
-      <strong>How to use:</strong><br>
-      1. Go to ChatGPT<br>
-      2. Right-click any chat and select "Pin Chat"<br>
-      3. Pinned chats appear at the top with golden highlights!<br>
-      4. Right-click again to unpin
-    </div>
-  </div>
 
   
 
