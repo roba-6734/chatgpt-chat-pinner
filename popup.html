@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatGPT Chat Pinner</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      width: 300px;
+      min-height: 200px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .header {
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .header p {
+      margin: 8px 0 0 0;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .content {
+      padding: 20px;
+    }
+
+    .stats {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .stat-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .stat-value {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .instructions {
+      font-size: 13px;
+      line-height: 1.5;
+      opacity: 0.9;
+      text-align: center;
+    }
+
+    .instructions strong {
+      color: #ffd700;
+    }
+
+    .footer {
+      padding: 16px 20px;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .icon {
+      width: 24px;
+      height: 24px;
+      margin-bottom: 8px;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top: 2px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M16 12V4h1V2H7v2h1v8l-2 2v1h5.2l.8 3 .8-3H18v-1l-2-2z"/>
+    </svg>
+    <h1>Chat Pinner</h1>
+    <p>Pin your favorite ChatGPT chats</p>
+  </div>
+
+  <div class="content">
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-label">Pinned Chats:</span>
+        <span class="stat-value" id="pinnedCount">
+          <div class="loading">
+            <div class="spinner"></div>
+            Loading...
+          </div>
+        </span>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <strong>How to use:</strong><br>
+      1. Go to ChatGPT<br>
+      2. <strong>Method 1:</strong> Hover over any chat and click the pin icon<br>
+      3. <strong>Method 2:</strong> Right-click any chat and select "Pin Chat"<br>
+      4. Pinned chats appear at the top with golden highlights!
+    </div>
+  </div>
+
+  <div class="footer">
+    Made with ❤️ for better ChatGPT experience
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

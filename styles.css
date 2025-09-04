@@ -1,0 +1,158 @@
+/* ChatGPT Chat Pinner Extension Styles */
+
+.chat-pin-container {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Show pin button on hover */
+*:hover > .chat-pin-container,
+*:focus-within > .chat-pin-container,
+.pinned-chat .chat-pin-container {
+  opacity: 1;
+}
+
+.chat-pin-button {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 4px;
+  color: #8e8ea0;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.chat-pin-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
+.chat-pin-button:active {
+  transform: scale(0.95);
+}
+
+.pin-button-clicked {
+  animation: pinPulse 0.3s ease;
+}
+
+@keyframes pinPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Pinned chat styling */
+.pinned-chat {
+  position: relative;
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent 50%) !important;
+  border-left: 3px solid #ffd700 !important;
+}
+
+.pinned-chat .chat-pin-button {
+  color: #ffd700 !important;
+}
+
+.pinned-chat .chat-pin-button:hover {
+  color: #ffed4a !important;
+  background-color: rgba(255, 215, 0, 0.2) !important;
+}
+
+/* Animation for reordered chats */
+.pinned-chat-reordered {
+  animation: slideToTop 0.3s ease;
+}
+
+@keyframes slideToTop {
+  from {
+    transform: translateY(10px);
+    opacity: 0.7;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Pinned indicator */
+.pinned-chat::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #ffd700, #ffed4a);
+  z-index: 1;
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .chat-pin-button {
+    color: #8e8ea0;
+  }
+  
+  .chat-pin-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+  
+  .pinned-chat {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), transparent 50%) !important;
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .chat-pin-container {
+    right: 4px;
+  }
+  
+  .chat-pin-button {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .chat-pin-button svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* Accessibility improvements */
+.chat-pin-button:focus {
+  outline: 2px solid #ffd700;
+  outline-offset: 2px;
+}
+
+.chat-pin-button:focus-visible {
+  outline: 2px solid #ffd700;
+  outline-offset: 2px;
+}
+
+/* Context menu enhancement - highlight chat items on right-click */
+.chat-item-context-highlight {
+  background-color: rgba(255, 215, 0, 0.2) !important;
+  transition: background-color 0.1s ease;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .pinned-chat {
+    border-left-width: 4px !important;
+  }
+  
+  .chat-pin-button {
+    border: 1px solid currentColor;
+  }
+}
