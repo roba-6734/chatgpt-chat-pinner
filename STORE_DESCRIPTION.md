@@ -43,6 +43,39 @@ Tired of scrolling through your ChatGPT chat history to find important conversat
 - Uses Chrome's built-in storage APIs
 - Optimized for performance and reliability
 
+## Privacy & Data Security
+
+**Your Privacy is Our Priority**
+
+This extension is designed with privacy-first principles:
+
+🔒 **Zero Data Collection**: We do not collect, store, or transmit any personal information
+📱 **Local Storage Only**: All data stays in your browser using Chrome's built-in storage
+🌐 **No External Servers**: We have no servers to store or access your data
+📊 **No Analytics**: No tracking, analytics, or monitoring of your usage
+🔐 **Minimal Permissions**: Only requests the permissions absolutely necessary for functionality
+
+**What We Store:**
+- Chat IDs (unique identifiers) for chats you choose to pin
+- This data is stored locally in your browser only
+- No chat content, conversations, or personal information is accessed
+
+**Data Usage:**
+- Chat IDs are used solely to remember your pinned chat preferences
+- Data helps reorder your chat list to show pinned chats at the top
+- Preferences are maintained across browser sessions
+
+**Cross-Device Sync:**
+- If you have Chrome sync enabled, your pinned chats may sync across devices
+- This is handled entirely by Chrome's built-in sync service
+- We have no control over or access to this sync process
+
+**Compliance:**
+- ✅ GDPR compliant (European Union)
+- ✅ CCPA compliant (California)
+- ✅ Chrome Web Store privacy standards
+- ✅ No third-party data sharing
+
 Transform your ChatGPT experience from chaotic to organized with ChatGPT Chat Pinner!
 
 ---
@@ -62,7 +95,7 @@ chatgpt, organization, productivity, chat, pin, organize, ai, openai
 4. **Visual Styling**: Displays the beautiful golden borders and styling for pinned chats
 
 ## Privacy Policy URL
-[Link to your privacy policy]
+https://github.com/roba-6734/chatgpt-chat-pinner/blob/main/PRIVACY_POLICY.md
 
 ## Support URL
-[Link to your support page or GitHub repository]
+https://github.com/roba-6734/chatgpt-chat-pinner

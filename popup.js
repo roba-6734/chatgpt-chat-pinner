@@ -5,14 +5,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     const result = await chrome.storage.sync.get(['pinnedChats']);
     const pinnedChats = result.pinnedChats || [];
-    
-    
+       
     const countElement = document.getElementById('pinnedCount');
     countElement.textContent = pinnedChats.length.toString();
-    
-    
-  
-    
+
   } catch (error) {
     console.error('Failed to load popup data:', error);
     const countElement = document.getElementById('pinnedCount');

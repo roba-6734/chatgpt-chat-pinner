@@ -1,7 +1,6 @@
 
 
 chrome.runtime.onInstalled.addListener((details) => {
-  
   chrome.contextMenus.create({
     id: 'pin-chat',
     title: 'Pin Chat',
@@ -23,17 +22,14 @@ chrome.runtime.onInstalled.addListener((details) => {
   });
 
   if (details.reason === 'install') {
-   
     chrome.storage.sync.set({ pinnedChats: [] });
     console.log('ChatGPT Chat Pinner extension installed');
 
     chrome.tabs.create({
       url: 'https://chatgpt.com'
-    }); 
-
-    }
+    });
+  }
 });
-
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId === 'pin-chat' || info.menuItemId === 'unpin-chat') {
@@ -53,7 +49,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       await chrome.storage.sync.set({ 
         pinnedChats: Array.from(pinnedChats) 
       });
- 
+
       chrome.tabs.sendMessage(tab.id, {
         type: 'contextMenuPinToggle',
         chatId: chatId,
@@ -68,10 +64,22 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   }
 });
 
-
 chrome.storage.onChanged.addListener(async (changes, namespace) => {
   if (namespace === 'sync' && changes.pinnedChats) {
     updateContextMenus(changes.pinnedChats.newValue || []);
+
+    chrome.tabs.query({
+      url: ['https://chatgpt.com/*', 'https://chat.openai.com/*']
+    }, (tabs) => {
+      tabs.forEach((tab) => {
+        chrome.tabs.sendMessage(tab.id, {
+          type: 'pinnedChatsUpdated',
+          pinnedChats: changes.pinnedChats.newValue
+        }).catch(() => {
+          // Tab might not have content script loaded yet, ignore error
+        });
+      });
+    });
   }
 });
 
@@ -82,35 +90,23 @@ function extractChatIdFromUrl(url) {
 }
 
 function updateContextMenus(pinnedChats) {
- 
+  chrome.contextMenus.update('pin-chat', {
+    title: 'Pin Chat',
+    enabled: true
+  });
+  
+  chrome.contextMenus.update('unpin-chat', {
+    title: 'Unpin Chat',
+    enabled: true
+  });
 }
-
-
-chrome.storage.onChanged.addListener((changes, namespace) => {
-  if (namespace === 'sync' && changes.pinnedChats) {
-   
-    chrome.tabs.query({
-      url: ['https://chatgpt.com/*', 'https://chat.openai.com/*']
-    }, (tabs) => {
-      tabs.forEach((tab) => {
-        chrome.tabs.sendMessage(tab.id, {
-          type: 'pinnedChatsUpdated',
-          pinnedChats: changes.pinnedChats.newValue
-        }).catch(() => {
-          
-        });
-      });
-    });
-  }
-});
-
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'getPinnedChats') {
     chrome.storage.sync.get(['pinnedChats']).then((result) => {
       sendResponse(result.pinnedChats || []);
     });
-    return true; 
+    return true;
   }
   
   if (message.type === 'setPinnedChats') {
@@ -119,6 +115,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }).catch((error) => {
       sendResponse({ success: false, error: error.message });
     });
-    return true; 
+    return true;
   }
 });
