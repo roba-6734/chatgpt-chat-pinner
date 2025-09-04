@@ -6,16 +6,14 @@
   top: 50%;
   transform: translateY(-50%);
   z-index: 10;
-  opacity: 0;
+  opacity: 1;
   transition: opacity 0.2s ease;
 }
 
-/* Show pin button on hover */
-*:hover > .chat-pin-container,
-*:focus-within > .chat-pin-container,
-.pinned-chat .chat-pin-container {
+/* Pin button is always visible - removed hover dependency */
+/* .pinned-chat .chat-pin-container {
   opacity: 1;
-}
+} */
 
 .chat-pin-button {
   background: none;
@@ -63,10 +61,10 @@
   color: #ffd700 !important;
 }
 
-.pinned-chat .chat-pin-button:hover {
+/* .pinned-chat .chat-pin-button:hover {
   color: #ffed4a !important;
   background-color: rgba(255, 215, 0, 0.2) !important;
-}
+} */
 
 /* Animation for reordered chats */
 .chat-reordering {

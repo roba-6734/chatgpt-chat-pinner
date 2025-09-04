@@ -145,22 +145,22 @@ class ChatPinner {
     });
   }
 
-  processChatItem(chatItem) {
-    // Skip if already processed
-    if (chatItem.querySelector('.chat-pin-button')) return;
+  // processChatItem(chatItem) {
+  //   // Skip if already processed
+  //   if (chatItem.querySelector('.chat-pin-button')) return;
 
-    const chatId = this.extractChatId(chatItem);
-    if (!chatId) return;
+  //   const chatId = this.extractChatId(chatItem);
+  //   if (!chatId) return;
 
-    // Create pin button
-    const pinButton = this.createPinButton(chatId, chatItem);
+  //   // Create pin button
+  //   // const pinButton = this.createPinButton(chatId, chatItem);
     
-    // Add pin button to chat item
-    this.addPinButtonToChat(chatItem, pinButton);
+  //   // // Add pin button to chat item
+  //   // this.addPinButtonToChat(chatItem, pinButton);
     
-    // Update visual state
-    this.updateChatVisualState(chatItem, chatId);
-  }
+  //   // // Update visual state
+  //   // this.updateChatVisualState(chatItem, chatId);
+  // }
 
   extractChatId(chatItem) {
     const href = chatItem.getAttribute('href');
