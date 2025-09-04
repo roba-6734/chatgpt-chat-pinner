@@ -42,6 +42,9 @@ class ChatPinner {
       // Skip if we're currently reordering to prevent infinite loops
       if (this.isReordering) return;
       
+      // Add safety check to prevent conflicts with React
+      if (document.hidden || !document.hasFocus()) return;
+      
       let shouldProcess = false;
       
       mutations.forEach((mutation) => {
@@ -85,6 +88,11 @@ class ChatPinner {
   processExistingChats() {
     if (this.isReordering) return;
     
+    // Add safety check to prevent conflicts with React
+    if (document.hidden || !document.hasFocus()) {
+      return;
+    }
+    
     // Find chat list container
     this.findChatListContainer();
     
@@ -92,7 +100,12 @@ class ChatPinner {
     const chatItems = this.findChatItems();
     
     if (chatItems.length > 0) {
-      chatItems.forEach(chatItem => this.processChatItem(chatItem));
+      // Filter out invalid DOM nodes
+      const validChatItems = chatItems.filter(item => 
+        item && item.parentNode && document.contains(item)
+      );
+      
+      validChatItems.forEach(chatItem => this.processChatItem(chatItem));
       this.debouncedReorderChats();
     }
   }
@@ -145,22 +158,14 @@ class ChatPinner {
     });
   }
 
-  // processChatItem(chatItem) {
-  //   // Skip if already processed
-  //   if (chatItem.querySelector('.chat-pin-button')) return;
+  processChatItem(chatItem) {
+    const chatId = this.extractChatId(chatItem);
+    if (!chatId) return;
 
-  //   const chatId = this.extractChatId(chatItem);
-  //   if (!chatId) return;
-
-  //   // Create pin button
-  //   // const pinButton = this.createPinButton(chatId, chatItem);
-    
-  //   // // Add pin button to chat item
-  //   // this.addPinButtonToChat(chatItem, pinButton);
-    
-  //   // // Update visual state
-  //   // this.updateChatVisualState(chatItem, chatId);
-  // }
+    // Pin button functionality has been removed
+    // Only update visual state for pinned chats
+    this.updateChatVisualState(chatItem, chatId);
+  }
 
   extractChatId(chatItem) {
     const href = chatItem.getAttribute('href');
@@ -171,80 +176,13 @@ class ChatPinner {
     return null;
   }
 
-  createPinButton(chatId, chatItem) {
-    const button = document.createElement('button');
-    button.className = 'chat-pin-button';
-    button.innerHTML = this.pinnedChats.has(chatId) ? 
-      '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 12V4h1V2H7v2h1v8l-2 2v1h5.2l.8 3 .8-3H18v-1l-2-2z"/></svg>' : 
-      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 12V4h1V2H7v2h1v8l-2 2v1h5.2l.8 3 .8-3H18v-1l-2-2z"/></svg>';
-    
-    button.title = this.pinnedChats.has(chatId) ? 'Unpin chat' : 'Pin chat';
-    button.setAttribute('data-chat-id', chatId);
-    
-    button.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      this.togglePin(chatId, button, chatItem);
-    });
 
-    return button;
-  }
 
-  addPinButtonToChat(chatItem, pinButton) {
-    // Find the best place to add the pin button
-    const titleElement = chatItem.querySelector('[class*="truncate"]') || 
-                        chatItem.querySelector('div:first-child') ||
-                        chatItem;
 
-    // Create container for the pin button
-    const container = document.createElement('div');
-    container.className = 'chat-pin-container';
-    container.appendChild(pinButton);
 
-    // Position the button appropriately
-    if (titleElement && titleElement !== chatItem) {
-      titleElement.style.position = 'relative';
-      titleElement.appendChild(container);
-    } else {
-      chatItem.style.position = 'relative';
-      chatItem.appendChild(container);
-    }
-  }
 
-  async togglePin(chatId, button, chatItem) {
-    if (this.isReordering) return;
-    
-    let wasError = false;
-    
-    try {
-      if (this.pinnedChats.has(chatId)) {
-        this.pinnedChats.delete(chatId);
-        button.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 12V4h1V2H7v2h1v8l-2 2v1h5.2l.8 3 .8-3H18v-1l-2-2z"/></svg>';
-        button.title = 'Pin chat';
-        chatItem.classList.remove('pinned-chat');
-      } else {
-        this.pinnedChats.add(chatId);
-        button.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 12V4h1V2H7v2h1v8l-2 2v1h5.2l.8 3 .8-3H18v-1l-2-2z"/></svg>';
-        button.title = 'Unpin chat';
-        chatItem.classList.add('pinned-chat');
-      }
 
-      await this.savePinnedChats();
-      
-      // Add visual feedback
-      button.classList.add('pin-button-clicked');
-      setTimeout(() => button.classList.remove('pin-button-clicked'), 200);
-      
-      // Reorder chats after a short delay
-      this.debouncedReorderChats();
-      
-    } catch (error) {
-      console.error('Failed to toggle pin:', error);
-      wasError = true;
-      // Revert changes if there was an error
-      this.pinnedChats.has(chatId) ? this.pinnedChats.delete(chatId) : this.pinnedChats.add(chatId);
-    }
-  }
+
 
   updateChatVisualState(chatItem, chatId) {
     if (this.pinnedChats.has(chatId)) {
@@ -263,10 +201,18 @@ class ChatPinner {
 
   reorderChats() {
     if (this.isReordering) return;
+    
+    // Add additional safety check to prevent conflicts with React
+    if (document.hidden || !document.hasFocus()) {
+      return;
+    }
+    
     this.isReordering = true;
     
     try {
       this.performReorder();
+    } catch (error) {
+      console.error('Error during chat reordering:', error);
     } finally {
       // Reset the flag after a delay to allow DOM to settle
       setTimeout(() => {
@@ -295,6 +241,7 @@ class ChatPinner {
     if (JSON.stringify(currentOrder) === JSON.stringify(expectedOrder)) {
       return;
     }
+
     // Separate pinned and unpinned chats
     const pinnedChats = [];
     const unpinnedChats = [];
@@ -312,40 +259,44 @@ class ChatPinner {
     const parentContainer = chatItems[0]?.parentElement;
     if (!parentContainer) return;
 
-    // Create document fragment for efficient DOM manipulation
-    const fragment = document.createDocumentFragment();
-    
-    // Store original positions to avoid unnecessary moves
-    const originalPositions = new Map();
-    chatItems.forEach((item, index) => {
-      originalPositions.set(item, index);
-    });
+    // Use a safer approach: move existing nodes instead of cloning
+    try {
+      // Move pinned chats to the top
+      pinnedChats.forEach((chat) => {
+        if (chat.parentNode === parentContainer) {
+          // Move to the beginning
+          parentContainer.insertBefore(chat, parentContainer.firstChild);
+        }
+      });
 
-    // Add pinned chats first
-    pinnedChats.forEach(chat => {
-      fragment.appendChild(chat.cloneNode(true));
-    });
+      // Move unpinned chats after pinned ones
+      unpinnedChats.forEach((chat) => {
+        if (chat.parentNode === parentContainer) {
+          // Move to the end
+          parentContainer.appendChild(chat);
+        }
+      });
 
-    // Add unpinned chats
-    unpinnedChats.forEach(chat => {
-      fragment.appendChild(chat.cloneNode(true));
-    });
+      // Update visual states for all chats
+      const allChats = [...pinnedChats, ...unpinnedChats];
+      allChats.forEach(chatItem => {
+        const chatId = this.extractChatId(chatItem);
+        if (chatId) {
+          this.updateChatVisualState(chatItem, chatId);
+        }
+      });
 
-    // Replace all chat items at once
-    const allChats = [...pinnedChats, ...unpinnedChats];
-    allChats.forEach(chat => chat.remove());
-    
-    // Re-process the cloned items to add pin buttons
-    const newChatItems = Array.from(fragment.children);
-    newChatItems.forEach(chatItem => {
-      const chatId = this.extractChatId(chatItem);
-      if (chatId) {
-        this.processChatItem(chatItem);
-        this.updateChatVisualState(chatItem, chatId);
-      }
-    });
-
-    parentContainer.appendChild(fragment);
+    } catch (error) {
+      console.error('Error during reordering:', error);
+      // If reordering fails, just update visual states without moving nodes
+      const allChats = [...pinnedChats, ...unpinnedChats];
+      allChats.forEach(chatItem => {
+        const chatId = this.extractChatId(chatItem);
+        if (chatId) {
+          this.updateChatVisualState(chatItem, chatId);
+        }
+      });
+    }
   }
 
   destroy() {
@@ -380,22 +331,6 @@ class ChatPinner {
       });
 
       if (targetChatItem) {
-        // Update pin button if it exists
-        const pinButton = targetChatItem.querySelector('.chat-pin-button');
-        if (pinButton) {
-          if (action === 'pin-chat') {
-            pinButton.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 12V4h1V2H7v2h1v8l-2 2v1h5.2l.8 3 .8-3H18v-1l-2-2z"/></svg>';
-            pinButton.title = 'Unpin chat';
-          } else {
-            pinButton.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 12V4h1V2H7v2h1v8l-2 2v1h5.2l.8 3 .8-3H18v-1l-2-2z"/></svg>';
-            pinButton.title = 'Pin chat';
-          }
-          
-          // Add visual feedback
-          pinButton.classList.add('pin-button-clicked');
-          setTimeout(() => pinButton.classList.remove('pin-button-clicked'), 200);
-        }
-
         // Update visual state
         this.updateChatVisualState(targetChatItem, chatId);
       }

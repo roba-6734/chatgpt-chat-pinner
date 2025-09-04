@@ -11,9 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     countElement.textContent = pinnedChats.length.toString();
     
     // Add click handler to open ChatGPT if clicked
-    document.body.addEventListener('click', () => {
-      chrome.tabs.create({ url: 'https://chatgpt.com' });
-    });
+ 
     
   } catch (error) {
     console.error('Failed to load popup data:', error);
