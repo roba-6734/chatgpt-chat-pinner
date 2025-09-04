@@ -1,6 +1,6 @@
 # Privacy Policy for ChatGPT Chat Pinner
 
-**Last updated:** December 2024
+**Last updated:** September 2025
 
 ## Overview
 
