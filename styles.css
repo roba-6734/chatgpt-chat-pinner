@@ -69,19 +69,9 @@
 }
 
 /* Animation for reordered chats */
-.pinned-chat-reordered {
-  animation: slideToTop 0.3s ease;
-}
-
-@keyframes slideToTop {
-  from {
-    transform: translateY(10px);
-    opacity: 0.7;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.chat-reordering {
+  pointer-events: none;
+  transition: transform 0.2s ease;
 }
 
 /* Pinned indicator */

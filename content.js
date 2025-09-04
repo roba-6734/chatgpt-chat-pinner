@@ -5,6 +5,8 @@ class ChatPinner {
     this.pinnedChats = new Set();
     this.observer = null;
     this.chatListContainer = null;
+    this.isReordering = false;
+    this.reorderTimeout = null;
     this.init();
   }
 
@@ -37,6 +39,9 @@ class ChatPinner {
   setupObserver() {
     // Watch for DOM changes to catch dynamically loaded chats
     this.observer = new MutationObserver((mutations) => {
+      // Skip if we're currently reordering to prevent infinite loops
+      if (this.isReordering) return;
+      
       let shouldProcess = false;
       
       mutations.forEach((mutation) => {
@@ -58,7 +63,7 @@ class ChatPinner {
       });
       
       if (shouldProcess) {
-        setTimeout(() => this.processExistingChats(), 100);
+        this.debouncedProcessChats();
       }
     });
 
@@ -68,7 +73,18 @@ class ChatPinner {
     });
   }
 
+  debouncedProcessChats() {
+    clearTimeout(this.reorderTimeout);
+    this.reorderTimeout = setTimeout(() => {
+      if (!this.isReordering) {
+        this.processExistingChats();
+      }
+    }, 200);
+  }
+
   processExistingChats() {
+    if (this.isReordering) return;
+    
     // Find chat list container
     this.findChatListContainer();
     
@@ -77,7 +93,7 @@ class ChatPinner {
     
     if (chatItems.length > 0) {
       chatItems.forEach(chatItem => this.processChatItem(chatItem));
-      this.reorderChats();
+      this.debouncedReorderChats();
     }
   }
 
@@ -196,7 +212,9 @@ class ChatPinner {
   }
 
   async togglePin(chatId, button, chatItem) {
-    const wasError = false;
+    if (this.isReordering) return;
+    
+    let wasError = false;
     
     try {
       if (this.pinnedChats.has(chatId)) {
@@ -218,14 +236,13 @@ class ChatPinner {
       setTimeout(() => button.classList.remove('pin-button-clicked'), 200);
       
       // Reorder chats after a short delay
-      setTimeout(() => this.reorderChats(), 100);
+      this.debouncedReorderChats();
       
     } catch (error) {
       console.error('Failed to toggle pin:', error);
+      wasError = true;
       // Revert changes if there was an error
-      if (wasError) {
-        this.pinnedChats.has(chatId) ? this.pinnedChats.delete(chatId) : this.pinnedChats.add(chatId);
-      }
+      this.pinnedChats.has(chatId) ? this.pinnedChats.delete(chatId) : this.pinnedChats.add(chatId);
     }
   }
 
@@ -237,7 +254,28 @@ class ChatPinner {
     }
   }
 
+  debouncedReorderChats() {
+    clearTimeout(this.reorderTimeout);
+    this.reorderTimeout = setTimeout(() => {
+      this.reorderChats();
+    }, 150);
+  }
+
   reorderChats() {
+    if (this.isReordering) return;
+    this.isReordering = true;
+    
+    try {
+      this.performReorder();
+    } finally {
+      // Reset the flag after a delay to allow DOM to settle
+      setTimeout(() => {
+        this.isReordering = false;
+      }, 300);
+    }
+  }
+
+  performReorder() {
     if (!this.chatListContainer) {
       this.findChatListContainer();
     }
@@ -247,6 +285,16 @@ class ChatPinner {
     const chatItems = this.findChatItems();
     if (chatItems.length === 0) return;
 
+    // Check if reordering is actually needed
+    const currentOrder = chatItems.map(item => this.extractChatId(item));
+    const pinnedIds = Array.from(this.pinnedChats);
+    const unpinnedIds = currentOrder.filter(id => !this.pinnedChats.has(id));
+    const expectedOrder = [...pinnedIds, ...unpinnedIds];
+    
+    // If order is already correct, don't reorder
+    if (JSON.stringify(currentOrder) === JSON.stringify(expectedOrder)) {
+      return;
+    }
     // Separate pinned and unpinned chats
     const pinnedChats = [];
     const unpinnedChats = [];
@@ -264,30 +312,40 @@ class ChatPinner {
     const parentContainer = chatItems[0]?.parentElement;
     if (!parentContainer) return;
 
-    // Remove all chat items temporarily
-    const allChats = [...pinnedChats, ...unpinnedChats];
-    const fragments = document.createDocumentFragment();
+    // Create document fragment for efficient DOM manipulation
+    const fragment = document.createDocumentFragment();
+    
+    // Store original positions to avoid unnecessary moves
+    const originalPositions = new Map();
+    chatItems.forEach((item, index) => {
+      originalPositions.set(item, index);
+    });
 
     // Add pinned chats first
     pinnedChats.forEach(chat => {
-      chat.classList.add('pinned-chat-reordered');
-      fragments.appendChild(chat);
+      fragment.appendChild(chat.cloneNode(true));
     });
 
     // Add unpinned chats
     unpinnedChats.forEach(chat => {
-      chat.classList.remove('pinned-chat-reordered');
-      fragments.appendChild(chat);
+      fragment.appendChild(chat.cloneNode(true));
     });
 
-    // Clear and re-append in correct order
-    allChats.forEach(chat => {
-      if (chat.parentElement) {
-        chat.remove();
+    // Replace all chat items at once
+    const allChats = [...pinnedChats, ...unpinnedChats];
+    allChats.forEach(chat => chat.remove());
+    
+    // Re-process the cloned items to add pin buttons
+    const newChatItems = Array.from(fragment.children);
+    newChatItems.forEach(chatItem => {
+      const chatId = this.extractChatId(chatItem);
+      if (chatId) {
+        this.processChatItem(chatItem);
+        this.updateChatVisualState(chatItem, chatId);
       }
     });
 
-    parentContainer.appendChild(fragments);
+    parentContainer.appendChild(fragment);
   }
 
   destroy() {
@@ -304,6 +362,8 @@ class ChatPinner {
   }
 
   async handleContextMenuToggle(chatId, action) {
+    if (this.isReordering) return;
+    
     try {
       // Update local state
       if (action === 'pin-chat') {
@@ -341,7 +401,7 @@ class ChatPinner {
       }
 
       // Reorder chats
-      setTimeout(() => this.reorderChats(), 100);
+      this.debouncedReorderChats();
 
     } catch (error) {
       console.error('Failed to handle context menu toggle:', error);
@@ -362,10 +422,10 @@ function initializeChatPinner() {
 // Wait for the page to load and ChatGPT interface to be ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(initializeChatPinner, 1000);
+    setTimeout(initializeChatPinner, 1500);
   });
 } else {
-  setTimeout(initializeChatPinner, 1000);
+  setTimeout(initializeChatPinner, 1500);
 }
 
 // Re-initialize if the page changes (for SPAs like ChatGPT)
@@ -373,7 +433,7 @@ let currentUrl = location.href;
 const urlObserver = new MutationObserver(() => {
   if (location.href !== currentUrl) {
     currentUrl = location.href;
-    setTimeout(initializeChatPinner, 1500);
+    setTimeout(initializeChatPinner, 2000);
   }
 });
 
