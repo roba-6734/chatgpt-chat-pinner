@@ -15,7 +15,7 @@ A Chrome extension that allows you to pin your favorite ChatGPT chats and keeps 
 
 ### From Chrome Web Store (Recommended)
 
-1. **Visit the Chrome Web Store** and search for "ChatGPT Chat Pinner" ( Or use the following link https://chromewebstore.google.com/detail/dleggjjabcokclecmfjempkgadnhobdb?utm_source=item-share-cb)
+1. **Visit the Chrome Web Store** and search for "ChatGPT Chat Pinner" ( Or use the following link https://chromewebstore.google.com/detail/dleggjjabcokclecmfjempkgadnhobdb)
 2. **Click "Add to Chrome"** to install the extension
 3. **Start Using**: Navigate to [ChatGPT](https://chatgpt.com) and right-click any chat to pin/unpin
 
